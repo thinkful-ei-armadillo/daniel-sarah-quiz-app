@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>US Laws Quiz | Wrong Answer!</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="styles.css" />
   
 </head>
 <body>
@@ -14,7 +14,16 @@
   <div class="fail-text">
     <h2>Aww, you got the answer wrong.</h2>
   </div>
+  <div>
+    <a href="question.html" >
+    <input type="button" class="next-question" value="Next Question">
+  </a>
+  </div>
   <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-  <script src="main.js"></script>
+  <!-- <script src="main.js"></script> -->
+  <script>
+    $('.fail-text').html(`<h2>Aww, you got the answer wrong.</h2><br>
+    <p>You answered ${STORE.wrongAnswer[STORE.wrongAnswer.length -1]}, but the correct answer is ${QandA[STORE.currentQuestion].correctAnswer} </p>`);
+  </script>
 </body>
 </html>

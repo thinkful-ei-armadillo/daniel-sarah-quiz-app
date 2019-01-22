@@ -2,50 +2,37 @@
 /* es-lint disable no-console */
 'use strict';
 
-const QUESTIONS = [
-  'In what state is is illegal to NOT drink milk?',
-  'In Oregon it is illegal to hunt where?',
-  'In which state is it illegal to collect or carry away seaweed at night?',
-  'What is illegal to drive on the highway in Nevada?',
-  'In Missouri, what is illegal to drive with in the car?',
-  'In Minnesota, it is illegal to cross state lines with what on top of your head'
-];
+const QandA =[
+  { question: 'In what state is is illegal to NOT drink milk?',
+  answers: ['Nebraska','Ohio', 'Utah', 'California'],
+  correctAnswer: 'Utah'},
+  
+  {question: 'In Oregon it is illegal to hunt where?',
+  answers: [  'Backyard','National Park', 'On the beach', 'Cemetery'],
+  correctAnswer: 'Cemetery'},
+  
+  {question: 'In which state is it illegal to collect or carry away seaweed at night?',
+  answers: [  'California','Florida', 'South Carolina', 'New Hampshire'],
+  correctAnswer: 'New Hampshire'},
+  
+  {question: 'What is illegal to drive on the highway in Nevada?',
+  answers: [  'A personal airplane', 'Ferrari LaFerrari', 'Camel', 'Mule'],
+  correctAnswer: 'Camel'},
+  
+  {question: 'In Missouri, what is illegal to drive with in the car?',
+  answers: [  'A open bottle of Mountain Dew','An uncaged bear', 'A caged skunk,', 'Two spare tires'],
+  correctAnswer: 'An uncaged bear'}
+]
+
 
 const STORE = {
-  currentQuestion: [],
-  milk: [ { name: 'Nebraska', correct: false } ,
-    { name: 'Ohio', correct: false } , 
-    { name: 'Utah', correct: true }, 
-    { name:'California', correct: false } 
-  ],
-  hunt: [ { name: 'Backyard', correct: false } ,
-    { name: 'National Park', correct: false } , 
-    { name: 'On the beach', correct: false }, 
-    { name:'Cemetery', correct: true } 
-  ],
-  seaweed: [ { name: 'California', correct: false } ,
-    { name: 'Florida', correct: false } , 
-    { name: 'South Carolina', correct: false }, 
-    { name:'New Hampshire', correct: true } 
-  ],
-  highway: [ { name: 'A personal airplane', correct: false } ,
-    { name: 'Ferrari LaFerrari', correct: false } , 
-    { name: 'Camel', correct: true }, 
-    { name:'Mule', correct: false } 
-  ],
-  missouri: [ { name: 'A open bottle of Mountain Dew', correct: false } ,
-    { name: 'An uncaged bear', correct: true } , 
-    { Name: 'A caged skunk,', correct: false }, 
-    { name:'Two spare tires', correct: false } 
-  ],
-  minnesota: [ { name: 'A duck', correct: true } ,
-    { name: 'A spotlight over 1000 lumens', correct: true } , 
-    { name: 'A car', correct: false }, 
-    { name:'A hamburger', correct: false } 
-  ],
+  currentQuestion: 0,
   currentPage: [],
-  score: [ 0 ]
+  score: [ 0 ],
+  wrongAnswer: [],
+  view: {}
 };
+
 
 const IMAGES = {
   happy: [ { url: 'https://drive.google.com/file/d/13ZQ0yOZGW7W-Uzgn04-X1rn9GiDsaJU7/view?usp=sharing', alt: 'cute shiba smiling' },
@@ -59,24 +46,112 @@ const IMAGES = {
 
 // template generator for answer lists
 
-function generateAnswerList(answers) {
+function generateAnswerList() {
   // call on STORE for the current question number, then generate the
   // HTML list of answers accordingly
-}
+  let i = STORE.currentQuestion;
+    console.log(`event listener works inside answerList`);
+  $('.js-question-answers').html(`<input type="radio" name="question" value=${QandA[i].answers[0]}> ${QandA[i].answers[0]}<br>
+    <input type="radio" name="question" value=${QandA[i].answers[1]}> ${QandA[i].answers[1]} <br>
+    <input type="radio" name="question" value=${QandA[i].answers[2]}> ${QandA[i].answers[2]}<br>
+    <input type="radio" name="question" value=${QandA[i].answers[3]}> ${QandA[i].answers[3]} <br>
+    <input type="submit" name="Submit" value="Submit"/>`);
+ 
+  console.log(`after event listener`)
+  
+};
+  
+
 
 function renderQuestionText() {
   // call on STORE.currentQuestion and generate the HTML for the correct
   // question prompt from QUESTION storage
+  let i = STORE.currentQuestion;
+  $('.question-title').html(`<h1>QUESTION:</h1> <h2> ${QandA[i].question} </h2>`);
+  console.log(`renderQuestionText`);
+
 }
 
 function handleAnswerSubmitted() {
   // listen for the answer submitted by the user, then check against STORE
   // to see if it is the correct answer, then send user to appropriate
   // answer result page (CORRECT/WRONG)
+$('.js-question-answers').on('submit', function(event){
+  console.log(`answersubmitted is running`)
+  event.preventDefault();
+  //debugger;
+  let answer=  $('input[name=question]:checked').val();
+
+   if( answer === QandA[STORE.currentQuestion].correctAnswer){
+      //send to correct.html page
+   //   window.location.href="correct.html"
+      console.log(`clicked correct answer`)
+      answerCorrect()
+   }
+   else {
+   // window.location.href="wrong.html"
+    STORE.wrongAnswer.push(answer);
+    console.log(`clicked wrong answer`)
+    answerWrong();
+   };
+})
+};
+
+function answerWrong(){
+ // $(document).ready(function(){
+    console.log(`the wrong answer text`);
+     $('.fail-text').html(`<h2>Aww, you got the answer wrong.</h2><br>
+    <p>You answered ${STORE.wrongAnswer[STORE.wrongAnswer.length -1]}, but the correct answer is ${QandA[STORE.currentQuestion].correctAnswer} </p>`);
+  //})
+
+}
+
+function answerCorrect(){
+
 }
 
 // handle score memory
 function handleScore() {
   // listen for answer correct/false, then push new count of correct answers to
   // STORE.score for memory
+
+
 }
+
+function handleTracker(){
+  // call on STORE.score to input the data for the answer tracker
+}
+
+function renderQuizApp(){
+  //render the quiz app
+  
+  
+  handleAnswerSubmitted()
+}
+
+function handleResults(){
+// check handleScore to see if user passes or fails
+// send to correct results page
+}
+
+
+function generateQuizApp(){
+  handleAnswerSubmitted();
+  handleScore();
+  
+  renderQuestionText();
+  generateAnswerList();
+  handleResults();
+  handleTracker();
+  
+  //needs to be last
+  renderQuizApp();
+}
+$(document).ready(function(){
+  generateQuizApp();
+})
+$('question.html').ready(function(){
+  STORE.currentQuestion++;
+  console.log(`question ready function is running`)
+})
+
