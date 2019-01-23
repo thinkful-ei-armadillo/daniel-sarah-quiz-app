@@ -29,8 +29,8 @@ const STORE = {
   currentQuestion: 0,
   score: 0,
   wrongAnswer: [],
+  currentView: 'start',
 };
-
 
 const IMAGES = {
   happy: [ { url: 'https://drive.google.com/file/d/13ZQ0yOZGW7W-Uzgn04-X1rn9GiDsaJU7/view?usp=sharing', alt: 'cute shiba smiling' },
@@ -42,18 +42,41 @@ const IMAGES = {
     { url: 'https://drive.google.com/file/d/1woS9_oqdLsv57Ugy930Jup5lSq92ooGP/view?usp=sharing' , alt: 'this plate is broken on the floor because of you. how dare you.' } ]
 };
 
+function renderQuizApp(){
+  //render the quiz app elements
+  if ( STORE.currentView === 'start' ) {
+    console.log(`STORE.currentView is currently ${STORE.currentView}`);
+    startView();
+  }
+  else if ( STORE.currentView === 'question' ) {
+    console.log(`STORE.currentView is currently ${STORE.currentView}`);
+    questionView();
+  }
+  else if ( STORE.currentView === 'correct' ) {
+    console.log(`STORE.currentView is currently ${STORE.currentView}`);
+    answerCorrect();
+  }
+  else if ( STORE.currentView === 'wrong' ) {
+    console.log(`STORE.currentView is currently ${STORE.currentView}`);
+    answerWrong();
+  }
+  else if ( STORE.currentView === 'results' ) {
+    console.log(`STORE.currentView is currently ${STORE.currentView}`);
+    handleResults();
+  }
+}
+
 // handling start page
 
 function startView() {
-  $(document).ready( function () {
-    console.log('start document ready ran');
-    $('.js-master-container').html(`<div class="start-title">
+  console.log('startView ran');
+  $('.js-master-container').html(`<div class="start-title">
     <h1>How well do you know US Law?</h1>
   </div>
   <div class="start-button-container">
       <input type="button" value="START" class="start-button js-start-button"/>
   </div>`);
-  });
+  startButton();
 }
 
 // handle start button
@@ -63,32 +86,10 @@ function startButton() {
   $('.start-button-container').on('click', 'js-start-button', function() {
     console.log('start button pressed - ENGAGE!');
     $(event).preventDefault();
-    questionView();
+    STORE.currentView = 'question';
+    renderQuizApp();
   });
 }
-
-// template generator for answer lists
-
-// function generateAnswerList() {
-//   // call on STORE for the current question number, then generate the
-//   // HTML list of answers accordingly
-//   let i = STORE.currentQuestion;
-//   $('.js-question-answers').html(`<input type="radio" name="question" value=${QandA[i].answers[0]} required> ${QandA[i].answers[0]}<br>
-//     <input type="radio" name="question" value=${QandA[i].answers[1]} required> ${QandA[i].answers[1]} <br>
-//     <input type="radio" name="question" value=${QandA[i].answers[2]} required> ${QandA[i].answers[2]}<br>
-//     <input type="radio" name="question" value=${QandA[i].answers[3]} required> ${QandA[i].answers[3]} <br>
-//     <input type="submit" name="Submit" value="Submit"/>`);
-   
-// }
-  
-// function renderQuestionText() {
-//   // call on STORE.currentQuestion and generate the HTML for the correct
-//   // question prompt from QUESTION storage
-//   let i = STORE.currentQuestion;
-//   $('.question-title').html(`<h1>QUESTION:</h1> <h2> ${QandA[i].question} </h2>`);
-//   console.log('renderQuestionText');
-
-// }
 
 // handling question page
 
@@ -109,7 +110,8 @@ function questionView() {
   <div class="tracker-container">
     <p class="tracker js-tracker">Question ${STORE.currentQuestion} of 10  |  ${STORE.score} of 10 Correct</p>
   </div>`);
-  STORE.currentQuestion++;
+  handleAnswerSubmitted();
+  // renderQuizApp();
 }
 
 function handleAnswerSubmitted() {
@@ -123,14 +125,22 @@ function handleAnswerSubmitted() {
 
     if( answer === QandA[STORE.currentQuestion].correctAnswer){
       console.log('clicked correct answer');
-      answerCorrect();
+      STORE.currentView = 'correct';
+      renderQuizApp();
     }
     else {
       STORE.wrongAnswer.push(answer);
       console.log('clicked wrong answer');
-      answerWrong();
+      STORE.currentView = 'wrong';
+      renderQuizApp();
     }
   });
+}
+
+function answerCorrect(){
+  // iterate score tracker in STORE and load the next question
+  STORE.score++;
+  nextQuestion();
 }
 
 function answerWrong(){
@@ -143,46 +153,42 @@ function answerWrong(){
   nextQuestion();
 }
 
-function answerCorrect(){
-  STORE.score++;
-  nextQuestion();
-}
-
 // handling next question rendering on next question button click
 function nextQuestion() {
   if ( STORE.currentQuestion < QandA.length ) {
     $('js-next-question-container').on( 'click', '.js-next-question-button', function () {
       STORE.currentQuestion++;
-      questionView();
+      STORE.currentView = 'question';
     });
   }
   else {
-    handleResults();
+    STORE.currentView = 'results';
+    renderQuizApp();
   }
 }
 
-// handle score memory
-function handleScore() {
-  // listen for answer correct/false, then push new count of correct answers to
-  // STORE.score for memory
-
-}
-
-function handleTracker(){
-  // call on STORE.score to input the data for the answer tracker
-}
-
-function renderQuizApp(){
-  //render the quiz app elements
-  
-  
-  handleAnswerSubmitted();
-}
-
 function handleResults(){
-// check handleScore to see if user passes or fails
+// check STORE.score to see if user passes or fails
 // send to correct results view
 // need to build template for results within master-container here
+  if ( STORE.score >= 5 ) {
+    $('.master-container').html(`<div class="congrats-message-container js-congrats-message-container">
+    <h2 class="congrats-title">Congratulations!</h2>
+    <p class="congrats-results">You got ${STORE.score} correct!</p>
+  </div>
+  <div class="restart-button-container js-restart-button">
+    <input type="button" value="Restart" name="restart" class="restart-button js-restart-button" />
+  </div>`);
+  }
+  else if ( STORE.score < 5 ) {
+    $('.master-container').html(`<div class="fail-message-container js-fail-message-container">
+    <h2 class="fail-title">Oh No!</h2>
+    <p class="fail-results js-fail-results">You got only ${STORE.score} correct.</p>
+  </div>
+  <div class="restart-button-container js-restart-button">
+    <input type="button" value="Restart" name="restart" class="restart-button js-restart-button" />
+  </div>`);
+  }
 }
 
 // handle restart quiz
@@ -190,39 +196,25 @@ function handleResults(){
 function restartQuiz() {
   // listen for restart button press to reinitialize start view
   // and clear all user data in STORE
-  $('.js-restart').on( 'click', function () {STORE.currentQuestion = 0;
+  $('.js-restart').on( 'click', function () {
+    STORE.currentQuestion = 0;
     STORE.score = 0;
-    STORE.wrongAnswer = [];});
-  startView();
+    STORE.wrongAnswer = [];
+    STORE.currentView = 'start';
+    renderQuizApp();
+  });
 }
 
 
 function generateQuizApp(){
-  startView();
-  startButton();
-  questionView();
-  handleAnswerSubmitted();
-  handleScore();
+  renderQuizApp();
+  // renderQuizApp();
+  // handleAnswerSubmitted();
   
   // renderQuestionText();
   // generateAnswerList();
 
-  handleResults();
-  handleTracker();
-  
-  //needs to be last
-  renderQuizApp();
+  // handleResults();
 }
 
 $(generateQuizApp);
-
-// $(document).ready(function(){
-//   generateQuizApp();
-// });
-
-
-// $('question.html').ready(function(){
-//   STORE.currentQuestion++;
-//   console.log('question ready function is running');
-// });
-
