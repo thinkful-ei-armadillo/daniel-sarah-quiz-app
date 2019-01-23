@@ -36,12 +36,12 @@ const STORE = {
 };
 
 const IMAGES = {
-  happy: [ { url: 'https://drive.google.com/file/d/13ZQ0yOZGW7W-Uzgn04-X1rn9GiDsaJU7/view?usp=sharing', alt: 'cute shiba smiling' },
-    { url: 'https://drive.google.com/file/d/1ZerLufM1If6CXIGOnnLW5IXJ-GNFjCtY/view?usp=sharing' , alt:'black german shepherd dog beaming' },
+  happy: [ { url: 'https://images.unsplash.com/photo-1522030520855-25f51e8ac93d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80', alt: 'cute dog smiling on a rock' },
+    { url: 'https://images.unsplash.com/photo-1518879672846-f303439359a9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80' , alt:'dog running in snow' },
     { url: 'https://drive.google.com/file/d/1vE7XhT-QYyY9by-UCuj8RARE6W8Bajpr/view?usp=sharing' , alt: 'adorable rottie grinning and runn towards you' }
   ],
-  sad: [ { url: 'https://drive.google.com/file/d/1_N6ohnHf3qRkdUtUfNlMn8kvaQATgqfT/view?usp=sharing' , alt: 'pug is dissapointed in you.' },
-    { url: 'https://drive.google.com/file/d/1woS9_oqdLsv57Ugy930Jup5lSq92ooGP/view?usp=sharing' , alt: 'closeup of woman staring in distance with single tear rolling down cheek' },
+  sad: [ { url: 'https://images.unsplash.com/photo-1423958950820-4f2f1f44e075?ixlib=rb-1.2.1&auto=format&fit=crop&w=1500&q=80' , alt: 'pug is dissapointed in you.' },
+    { url: 'https://images.unsplash.com/photo-1440484433300-c3317c44152e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1123&q=80' , alt: 'forlorn bulldog lying on the ground' },
     { url: 'https://drive.google.com/file/d/1woS9_oqdLsv57Ugy930Jup5lSq92ooGP/view?usp=sharing' , alt: 'this plate is broken on the floor because of you. how dare you.' } ]
 };
 
@@ -77,11 +77,14 @@ function renderQuizApp(){
 
 function startView() {
   console.log('startView ran');
-  $('.js-master-container').html(`<div class="start-title">
-    <h1>How well do you know US Law?</h1>
-  </div>
-  <div class="start-button-container">
+  $('.js-master-container').html(`
+  <div for="start wrapper" class="start-container">
+  <div for="title wrapper" class="start-title">
+    <h1 for="Title of quiz" >How well do you know US Law?</h1>
+    </div>
+  <div for="container for start button" class="start-button-container">
       <input type="button" value="START" class="start-button js-start-button"/>
+  </div>
   </div>`);
 }
 
@@ -101,20 +104,26 @@ function startButton() {
 function questionView() {
 // here we will pass in all html inside master-container for each question to be rendered
   let i = STORE.currentQuestion;
-  $('.js-master-container').html(`<div class="question-title">
-  <h1>QUESTION:</h1>
-  <h2>${QandA[i].question}</h2>
+  $('.js-master-container').html(`
+  <div for="question wrapper" class="question-container">
+  <div class="question-title">
+  <h1 for="page title" >QUESTION:</h1>
+
+  <h2 for="question prompt">${QandA[i].question}</h2>
   </div>
-  <form class="question-answers js-question-answers">
+
+  <form for="question answers" class="question-answers js-question-answers">
   <input type="radio" name="question" value="${QandA[i].answers[0]}" required > ${QandA[i].answers[0]}<br>
   <input type="radio" name="question" value="${QandA[i].answers[1]}" required > ${QandA[i].answers[1]} <br>
   <input type="radio" name="question" value="${QandA[i].answers[2]}" required > ${QandA[i].answers[2]}<br>
   <input type="radio" name="question" value="${QandA[i].answers[3]}" required > ${QandA[i].answers[3]} <br>
-  <input type="submit" name="Submit" value="Submit"/>
+  <input type="submit" class="submit-button" name="Submit" value="Submit"/>
   </form>
-  <div class="tracker-container">
-    <p class="tracker js-tracker">Question ${STORE.currentQuestion + 1} of 5  |  ${STORE.score} of 5 Correct</p>
-  </div>`);
+  </div>
+  <div for="container for tracker" class="tracker-container">
+    <p for="tracking questions" class="tracker js-tracker">Question ${STORE.currentQuestion + 1} of 5  |  ${STORE.score} of 5 Correct</p>
+  </div>
+  `);
   handleAnswerSubmitted();
 }
 
@@ -144,19 +153,37 @@ function handleAnswerSubmitted() {
 }
 
 function answerCorrect(){
-  return `<h2>Yay, you got the answer right!</h2>
-  <div class="next-question-container js-next-question-container">
+ 
+  return `
+ <div for="image container" class="correct-container">
+  <h2>Yay, you got the answer right!</h2>
+  <div for="correct image" class="happy-image">
+  <img src="${IMAGES.happy[0].url}" alt="${IMAGES.happy[0].alt}">
+  </div>
+  <div for="next question" class="next-question-container js-next-question-container">
   <input type="button" value="Next" class="next-question-button js-next-question-button">
+  </div>
   </div>`;
+  
 }
+
 
 function answerWrong(){
   console.log(STORE.wrongAnswer);
-  return `<h2>Aww, you got the answer wrong.</h2><br>
-    <p>You answered ${STORE.wrongAnswer}, 
-    but the correct answer is ${QandA[STORE.currentQuestion].correctAnswer} 
-    </p><br><div class="next-question-container js-next-question-container">
+  return `
+  <div for="image container" class="wrong-container">
+  <h2 for="title">Aww, you got the answer wrong.</h2><br>
+
+  <div for="sad image" class="sad-image">
+  <img src="${IMAGES.sad[0].url}" alt="${IMAGES.sad[0].alt}">
+  </div>
+    <p for="wrong answer">You answered ${STORE.wrongAnswer}, 
+    but the correct answer is ${QandA[STORE.currentQuestion].correctAnswer}. 
+    </p><br>
+    <div class="next-question-container js-next-question-container">
+    
     <input type="button" value="Next" class="next-question-button js-next-question-button">
+    </div>
     </div>`;
 }
 
@@ -183,22 +210,30 @@ function handleResults(){
 // check STORE.score to see if user passes or fails
 // send to correct results view
 // need to build template for results within master-container here
-  if ( STORE.score >= 5 ) {
-    $('.master-container').html(`<div class="congrats-message-container js-congrats-message-container">
-    <h2 class="congrats-title">Congratulations!</h2>
-    <p class="congrats-results">You got ${STORE.score} correct!</p>
-  </div>
-  <div class="restart-button-container js-restart-button">
+  if ( STORE.score >= 3 ) {
+    $('.master-container').html(`
+  <div for="correct container" class="congrats-container">
+    <div class="congrats-message-container js-congrats-message-container">
+    <h2 for="title" class="congrats-title">Congratulations!</h2>
+    <p for="correct result" class="congrats-results">You got ${STORE.score} correct!</p>
+    </div>
+    <img src="${IMAGES.happy[1].url}" alt="${IMAGES.happy[1].alt}">
+    <div for="container for start button" class="restart-button-container js-restart-button">
     <input type="button" value="Restart" name="restart" class="restart-button js-restart-button" />
+    </div>
   </div>`);
   }
-  else if ( STORE.score < 5 ) {
-    $('.master-container').html(`<div class="fail-message-container js-fail-message-container">
-    <h2 class="fail-title">Oh No!</h2>
-    <p class="fail-results js-fail-results">You got only ${STORE.score} correct.</p>
+  else if ( STORE.score < 3 ) {
+    $('.master-container').html(`
+    <div for="fail container" class="fail-container">
+    <div class="fail-message-container js-fail-message-container">
+    <h2 for="title" class="fail-title">Oh No!</h2>
+    <p for="failure results" class="fail-results js-fail-results">You got only ${STORE.score} correct.</p>
   </div>
-  <div class="restart-button-container js-restart-button">
+  <img src="${IMAGES.sad[1].url}" alt="${IMAGES.sad[1].alt}">
+  <div for="container for start button" class="restart-button-container js-restart-button">
     <input type="button" value="Restart" name="restart" class="restart-button js-restart-button" />
+  </div>
   </div>`);
   }
 }
