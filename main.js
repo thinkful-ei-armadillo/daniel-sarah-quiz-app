@@ -172,16 +172,14 @@ function answerWrong(){
   console.log(STORE.wrongAnswer);
   return `
   <div for="image container" class="wrong-container">
-  <h2 for="title">Aww, you got the answer wrong.</h2><br>
-
+  <h2 for="title">Aww, you got the answer wrong.</h2>
   <div for="sad image" class="sad-image">
   <img src="${IMAGES.sad[0].url}" alt="${IMAGES.sad[0].alt}">
   </div>
     <p for="wrong answer">You answered ${STORE.wrongAnswer}, 
     but the correct answer is ${QandA[STORE.currentQuestion].correctAnswer}. 
-    </p><br>
+    </p>
     <div class="next-question-container js-next-question-container">
-    
     <input type="button" value="Next" class="next-question-button js-next-question-button">
     </div>
     </div>`;
@@ -228,7 +226,7 @@ function handleResults(){
     <div for="fail container" class="fail-container">
     <div class="fail-message-container js-fail-message-container">
     <h2 for="title" class="fail-title">Oh No!</h2>
-    <p for="failure results" class="fail-results js-fail-results">You got only ${STORE.score} correct.</p>
+    <p for="failure results" class="fail-results js-fail-results">You got ${STORE.score} correct.</p>
   </div>
   <img src="${IMAGES.sad[1].url}" alt="${IMAGES.sad[1].alt}">
   <div for="container for start button" class="restart-button-container js-restart-button">
@@ -236,6 +234,7 @@ function handleResults(){
   </div>
   </div>`);
   }
+  restartQuiz();
 }
 
 // handle restart quiz
@@ -243,7 +242,8 @@ function handleResults(){
 function restartQuiz() {
   // listen for restart button press to reinitialize start view
   // and clear all user data in STORE
-  $('.js-restart').on( 'click', function () {
+  $('.js-restart-button').on( 'click', function () {
+    console.log('restart button listener worked!');
     STORE.currentQuestion = 0;
     STORE.score = 0;
     STORE.wrongAnswer = [];
