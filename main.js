@@ -4,31 +4,34 @@
 
 const QandA =[
   { question: 'In what state is is illegal to NOT drink milk?',
-    answers: ['Nebraska','Ohio', 'Utah', 'California'],
-    correctAnswer: 'Utah'},
+    answers: [ 'Nebraska','Ohio', 'Utah', 'California' ],
+    correctAnswer: 'Utah'
+  },
   
   {question: 'In Oregon it is illegal to hunt where?',
-    answers: [  'Backyard','National Park', 'On the beach', 'Cemetery'],
-    correctAnswer: 'Cemetery'},
+    answers: [  'Backyard', 'National Park', 'Cemetery', 'On the beach' ],
+    correctAnswer: 'Cemetery'
+  },
   
-  {question: 'In which state is it illegal to collect or carry away seaweed at night?',
-    answers: [  'California','Florida', 'South Carolina', 'New Hampshire'],
+  { question: 'In which state is it illegal to collect or carry away seaweed at night?',
+    answers: [ 'California','Florida', 'South Carolina', 'New Hampshire' ],
     correctAnswer: 'New Hampshire'},
   
-  {question: 'What is illegal to drive on the highway in Nevada?',
-    answers: [  'A personal airplane', 'Ferrari LaFerrari', 'Camel', 'Mule'],
-    correctAnswer: 'Camel'},
-  
-  {question: 'In Missouri, what is illegal to drive with in the car?',
-    answers: [  'A open bottle of Mountain Dew','An uncaged bear', 'A caged skunk,', 'Two spare tires'],
-    correctAnswer: 'An uncaged bear'}
-];
+  { question: 'What is illegal to drive on the highway in Nevada?',
+    answers: [ 'A personal airplane', 'Ferrari LaFerrari', 'Camel', 'Mule' ],
+    correctAnswer: 'Camel' 
+  },
 
+  { question: 'In Missouri, what is illegal to drive with in the car?',
+    answers: [ 'A open bottle of Mountain Dew','An uncaged bear', 'A caged skunk', 'Two spare tires' ],
+    correctAnswer: 'An uncaged bear' 
+  }
+];
 
 const STORE = {
   currentQuestion: 0,
   score: 0,
-  wrongAnswer: [],
+  wrongAnswer: '',
   currentView: 'start',
 };
 
@@ -47,6 +50,7 @@ function renderQuizApp(){
   if ( STORE.currentView === 'start' ) {
     console.log(`STORE.currentView is currently ${STORE.currentView}`);
     startView();
+    startButton();
   }
   else if ( STORE.currentView === 'question' ) {
     console.log(`STORE.currentView is currently ${STORE.currentView}`);
@@ -54,15 +58,18 @@ function renderQuizApp(){
   }
   else if ( STORE.currentView === 'correct' ) {
     console.log(`STORE.currentView is currently ${STORE.currentView}`);
-    answerCorrect();
+    $('.js-master-container').html(answerCorrect());
+    STORE.score++;
+    nextQuestion();
   }
   else if ( STORE.currentView === 'wrong' ) {
     console.log(`STORE.currentView is currently ${STORE.currentView}`);
-    answerWrong();
+    $('.js-master-container').html(answerWrong());
+    nextQuestion();
   }
   else if ( STORE.currentView === 'results' ) {
     console.log(`STORE.currentView is currently ${STORE.currentView}`);
-    handleResults();
+    $('.js-master-container').html(handleResults());
   }
 }
 
@@ -76,16 +83,14 @@ function startView() {
   <div class="start-button-container">
       <input type="button" value="START" class="start-button js-start-button"/>
   </div>`);
-  startButton();
 }
 
 // handle start button
 
 function startButton() {
   console.log('startButton ran');
-  $('.start-button-container').on('click', 'js-start-button', function() {
+  $('.start-button-container').on('click', '.js-start-button', function() {
     console.log('start button pressed - ENGAGE!');
-    $(event).preventDefault();
     STORE.currentView = 'question';
     renderQuizApp();
   });
@@ -101,36 +106,37 @@ function questionView() {
   <h2>${QandA[i].question}</h2>
   </div>
   <form class="question-answers js-question-answers">
-  <input type="radio" name="question" value=${QandA[i].answers[0]} required> ${QandA[i].answers[0]}<br>
-  <input type="radio" name="question" value=${QandA[i].answers[1]} required> ${QandA[i].answers[1]} <br>
-  <input type="radio" name="question" value=${QandA[i].answers[2]} required> ${QandA[i].answers[2]}<br>
-  <input type="radio" name="question" value=${QandA[i].answers[3]} required> ${QandA[i].answers[3]} <br>
+  <input type="radio" name="question" value="${QandA[i].answers[0]}" required > ${QandA[i].answers[0]}<br>
+  <input type="radio" name="question" value="${QandA[i].answers[1]}" required > ${QandA[i].answers[1]} <br>
+  <input type="radio" name="question" value="${QandA[i].answers[2]}" required > ${QandA[i].answers[2]}<br>
+  <input type="radio" name="question" value="${QandA[i].answers[3]}" required > ${QandA[i].answers[3]} <br>
   <input type="submit" name="Submit" value="Submit"/>
   </form>
   <div class="tracker-container">
-    <p class="tracker js-tracker">Question ${STORE.currentQuestion} of 10  |  ${STORE.score} of 10 Correct</p>
+    <p class="tracker js-tracker">Question ${STORE.currentQuestion + 1} of 5  |  ${STORE.score} of 5 Correct</p>
   </div>`);
   handleAnswerSubmitted();
-  // renderQuizApp();
 }
 
 function handleAnswerSubmitted() {
   // listen for the answer submitted by the user, then check against STORE
   // to see if it is the correct answer, then send user to appropriate
   // answer result view (CORRECT/WRONG)
-  $('.js-question-answers').on('submit', function(event){
+  $('.js-question-answers').on('submit', function(event) {
     console.log('answersubmitted is running');
     event.preventDefault();
     let answer = $('input[name=question]:checked').val();
-
-    if( answer === QandA[STORE.currentQuestion].correctAnswer){
+    console.log($('input[name=question]:checked'));
+    console.log(answer);
+    if ( answer === QandA[STORE.currentQuestion].correctAnswer ) {
       console.log('clicked correct answer');
       STORE.currentView = 'correct';
       renderQuizApp();
     }
-    else {
-      STORE.wrongAnswer.push(answer);
+    else if ( answer !== QandA[STORE.currentQuestion].correctAnswer ) {
       console.log('clicked wrong answer');
+      STORE.wrongAnswer = answer;
+      console.log(STORE.wrongAnswer);
       STORE.currentView = 'wrong';
       renderQuizApp();
     }
@@ -138,33 +144,39 @@ function handleAnswerSubmitted() {
 }
 
 function answerCorrect(){
-  // iterate score tracker in STORE and load the next question
-  STORE.score++;
-  nextQuestion();
+  return `<h2>Yay, you got the answer right!</h2>
+  <div class="next-question-container js-next-question-container">
+  <input type="button" value="Next" class="next-question-button js-next-question-button">
+  </div>`;
 }
 
 function answerWrong(){
-  // $(document).ready(function(){
-  console.log('the wrong answer text');
-  $('.fail-text').html(`<h2>Aww, you got the answer wrong.</h2><br>
-    <p>You answered ${STORE.wrongAnswer[STORE.wrongAnswer.length -1]}, 
+  console.log(STORE.wrongAnswer);
+  return `<h2>Aww, you got the answer wrong.</h2><br>
+    <p>You answered ${STORE.wrongAnswer}, 
     but the correct answer is ${QandA[STORE.currentQuestion].correctAnswer} 
-    </p>`);
-  nextQuestion();
+    </p><br><div class="next-question-container js-next-question-container">
+    <input type="button" value="Next" class="next-question-button js-next-question-button">
+    </div>`;
 }
 
 // handling next question rendering on next question button click
 function nextQuestion() {
-  if ( STORE.currentQuestion < QandA.length ) {
-    $('js-next-question-container').on( 'click', '.js-next-question-button', function () {
-      STORE.currentQuestion++;
+  console.log('nextQuestion ran');
+  $('.js-next-question-container').on('click', '.js-next-question-button', function () {
+    console.log('nextQuestion if statement listener ran');
+    STORE.currentQuestion++;
+    if ( STORE.currentQuestion < QandA.length ) {
+      console.log('nextQuestion if statement worked');
       STORE.currentView = 'question';
-    });
-  }
-  else {
-    STORE.currentView = 'results';
-    renderQuizApp();
-  }
+      renderQuizApp();
+    }
+    else {
+      console.log('nextQuestion else statement worked');
+      STORE.currentView = 'results';
+      renderQuizApp();
+    }
+  });
 }
 
 function handleResults(){
@@ -208,13 +220,6 @@ function restartQuiz() {
 
 function generateQuizApp(){
   renderQuizApp();
-  // renderQuizApp();
-  // handleAnswerSubmitted();
-  
-  // renderQuestionText();
-  // generateAnswerList();
-
-  // handleResults();
 }
 
 $(generateQuizApp);
